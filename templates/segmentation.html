@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <h1 style="font-family: var(--font-heading); font-size: 2.2rem; margin-bottom: 0.5rem;">
+        <i class="fa-solid fa-users-viewfinder" style="color: var(--accent-emerald);"></i> Interactive Customer Segmentation Demo
+    </h1>
+    <p style="color: var(--text-muted); font-size: 1.05rem;">
+        Input customer demographic, household, and transaction attributes to predict their assigned cluster using the trained SmartCart ML pipeline (StandardScaler &rarr; 3D PCA &rarr; Agglomerative Cluster Centroids).
+    </p>
+</div>
+
+<div class="grid-2">
+    <!-- Customer Input Form -->
+    <div class="card">
+        <h3 class="section-title">
+            <i class="fa-solid fa-user-gear"></i> Customer Profile Attributes
+        </h3>
+        
+        <form action="{{ url_for('segmentation') }}" method="POST">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Annual Income ($)</label>
+                    <input type="number" name="income" class="form-control" value="{{ inputs.income }}" required step="any">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Customer Age (Years)</label>
+                    <input type="number" name="age" class="form-control" value="{{ inputs.age }}" required min="18" max="100">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Education Level</label>
+                    <select name="education" class="form-control">
+                        <option value="Graduate" {% if inputs.education == 'Graduate' %}selected{% endif %}>Graduate</option>
+                        <option value="Postgraduate" {% if inputs.education == 'Postgraduate' %}selected{% endif %}>Postgraduate</option>
+                        <option value="Undergraduate" {% if inputs.education == 'Undergraduate' %}selected{% endif %}>Undergraduate</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Living Household Status</label>
+                    <select name="living_with" class="form-control">
+                        <option value="Partner" {% if inputs.living_with == 'Partner' %}selected{% endif %}>Living with Partner</option>
+                        <option value="Alone" {% if inputs.living_with == 'Alone' %}selected{% endif %}>Living Alone</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Total Spending ($)</label>
+                    <input type="number" name="total_spending" class="form-control" value="{{ inputs.total_spending }}" required step="any">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Total Children at Home</label>
+                    <input type="number" name="total_children" class="form-control" value="{{ inputs.total_children }}" required min="0" max="5">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Web Purchases</label>
+                    <input type="number" name="web_purchases" class="form-control" value="{{ inputs.web_purchases }}" required min="0">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Store Purchases</label>
+                    <input type="number" name="store_purchases" class="form-control" value="{{ inputs.store_purchases }}" required min="0">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Catalog Purchases</label>
+                    <input type="number" name="catalog_purchases" class="form-control" value="{{ inputs.catalog_purchases }}" required min="0">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Monthly Web Visits</label>
+                    <input type="number" name="web_visits" class="form-control" value="{{ inputs.web_visits }}" required min="0">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1.2rem; justify-content: center; font-size: 1rem; padding: 0.85rem;">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Predict Customer Segment
+            </button>
+        </form>
+    </div>
+
+    <!-- Cluster Prediction Result Card -->
+    <div>
+        {% if result and result.error %}
+            <div class="card" style="border-left: 4px solid var(--accent-rose);">
+                <h3 style="color: var(--accent-rose);"><i class="fa-solid fa-circle-exclamation"></i> Prediction Error</h3>
+                <p style="color: var(--text-muted); margin-top: 0.5rem;">{{ result.error }}</p>
+            </div>
+        {% elif result %}
+            <div class="card" style="border-top: 4px solid {{ result.metadata.accent_color }};">
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <div style="font-size: 0.82rem; font-family: var(--font-heading); font-weight: 700; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem;">
+                        CUSTOMER SEGMENT
+                    </div>
+                    <div style="display: inline-block; margin-bottom: 0.8rem;">
+                        <span class="cluster-badge {{ result.metadata.badge_class }}" style="font-size: 1rem; padding: 6px 20px;">
+                            Cluster {{ result.cluster_id }}
+                        </span>
+                    </div>
+                    <h2 style="font-family: var(--font-heading); font-size: 1.6rem; color: var(--text-primary); margin-bottom: 0.6rem;">
+                        {{ result.metadata.name }}
+                    </h2>
+                    <p style="color: var(--text-secondary); font-size: 0.92rem; max-width: 440px; margin: 0 auto; line-height: 1.6;">
+                        {{ result.metadata.description }}
+                    </p>
+                </div>
+
+                <!-- Cluster Profile Benchmark Characteristics -->
+                <div style="background: rgba(13, 17, 26, 0.7); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 1.2rem; margin-bottom: 1.2rem;">
+                    <h4 style="font-family: var(--font-heading); font-size: 0.95rem; color: var(--accent-cyan); margin-bottom: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                        <i class="fa-solid fa-chart-column"></i> Segment Profile Characteristics
+                    </h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; font-size: 0.88rem;">
+                        <div>
+                            <span style="color: var(--text-muted); display: block;">Benchmark Income:</span>
+                            <strong style="color: var(--text-primary); font-size: 1rem;">{{ result.metadata.avg_income }}</strong>
+                        </div>
+                        <div>
+                            <span style="color: var(--text-muted); display: block;">Benchmark Spending:</span>
+                            <strong style="color: var(--text-primary); font-size: 1rem;">{{ result.metadata.avg_spending }}</strong>
+                        </div>
+                        <div>
+                            <span style="color: var(--text-muted); display: block;">Avg Household Children:</span>
+                            <strong style="color: var(--text-primary);">{{ result.metadata.avg_children }}</strong>
+                        </div>
+                        <div>
+                            <span style="color: var(--text-muted); display: block;">Living Status Distribution:</span>
+                            <strong style="color: var(--text-primary);">{{ result.metadata.living_status }}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3D PCA Projection Vector -->
+                <div style="background: rgba(13, 17, 26, 0.4); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 0.9rem 1.2rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;">
+                    <span style="color: var(--text-muted); font-family: var(--font-heading);"><i class="fa-solid fa-cube" style="color: var(--accent-primary-light);"></i> 3D PCA Vector:</span>
+                    <code style="color: var(--accent-primary-light); background: rgba(99, 102, 241, 0.1); padding: 3px 8px; border-radius: 4px;">
+                        [{{ result.pca_coords[0] }}, {{ result.pca_coords[1] }}, {{ result.pca_coords[2] }}]
+                    </code>
+                </div>
+            </div>
+        {% else %}
+            <!-- Initial State before submission -->
+            <div class="card" style="display: flex; flex-direction: column; justify-content: center; text-align: center; height: 100%; min-height: 380px; background: rgba(13, 17, 26, 0.5); border: 2px dashed var(--border-subtle);">
+                <div style="font-size: 2.8rem; color: var(--accent-primary-light); margin-bottom: 1rem;">
+                    <i class="fa-solid fa-circle-nodes"></i>
+                </div>
+                <h3 style="font-family: var(--font-heading); font-size: 1.4rem; color: var(--text-primary); margin-bottom: 0.6rem;">
+                    Ready for Live Customer Inference
+                </h3>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; max-width: 380px; margin: 0 auto;">
+                    Adjust the profile form attributes on the left and click <strong>Predict Customer Segment</strong> to execute the SmartCart pipeline.
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

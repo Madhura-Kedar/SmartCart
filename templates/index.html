@@ -1,0 +1,325 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- 1. Hero Section -->
+<section class="hero-section">
+    <div class="tagline-pill">
+        <i class="fa-solid fa-chart-diagram"></i> Minor Project Showcase
+    </div>
+    <h1 class="hero-title">
+        SMARTCART<br>
+        <span>E-Commerce Customer Segmentation</span>
+    </h1>
+    <p class="hero-subtitle">
+        An unsupervised machine learning system designed to discover hidden consumer personas from customer demographic, purchasing, and channel engagement data.
+    </p>
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="{{ url_for('analysis') }}" class="btn btn-primary">
+            <i class="fa-solid fa-chart-line"></i> Explore Analysis
+        </a>
+        <a href="{{ url_for('segmentation') }}" class="btn btn-secondary">
+            <i class="fa-solid fa-sliders"></i> Try Segmentation
+        </a>
+    </div>
+</section>
+
+<!-- 2. Project Overview Section -->
+<div class="card" style="margin-bottom: 2.8rem;">
+    <h2 class="section-title">
+        <i class="fa-solid fa-circle-info"></i> Project Overview
+    </h2>
+    <div class="grid-3" style="margin-bottom: 0; gap: 1.5rem;">
+        <div style="background: rgba(13, 17, 26, 0.6); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+            <div style="color: var(--accent-rose); font-size: 1.5rem; margin-bottom: 0.8rem;">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h4 style="font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-primary); margin-bottom: 0.5rem;">The Problem</h4>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6;">
+                E-commerce retail platforms collect massive raw customer logs, but struggle to extract actionable insights. Generic, one-size-fits-all marketing wastes ad spend on unaligned customer demographics.
+            </p>
+        </div>
+
+        <div style="background: rgba(13, 17, 26, 0.6); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+            <div style="color: var(--accent-cyan); font-size: 1.5rem; margin-bottom: 0.8rem;">
+                <i class="fa-solid fa-bullseye"></i>
+            </div>
+            <h4 style="font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-primary); margin-bottom: 0.5rem;">The Objective</h4>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6;">
+                Group customers into distinct, high-value behavioral segments using unsupervised ML algorithms, allowing marketing teams to deliver personalized campaigns and optimize product recommendations.
+            </p>
+        </div>
+
+        <div style="background: rgba(13, 17, 26, 0.6); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+            <div style="color: var(--accent-emerald); font-size: 1.5rem; margin-bottom: 0.8rem;">
+                <i class="fa-solid fa-cart-shopping"></i>
+            </div>
+            <h4 style="font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-primary); margin-bottom: 0.5rem;">What SmartCart Does</h4>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6;">
+                Processes customer records, cleans missing values and outliers, engineers total spending & household attributes, applies 3D PCA, and categorizes customers into 4 distinct personas using Agglomerative Clustering.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- 3. Key Statistics Section -->
+<div style="margin-bottom: 2.8rem;">
+    <h2 class="section-title">
+        <i class="fa-solid fa-chart-simple"></i> Key Project Statistics
+    </h2>
+    <div class="grid-4" style="margin-bottom: 0;">
+        <div class="card stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+            <div>
+                <div class="stat-number">2,236</div>
+                <div class="stat-label">Cleaned Customers (2,240 Raw)</div>
+            </div>
+        </div>
+
+        <div class="card stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-diagram-next"></i></div>
+            <div>
+                <div class="stat-number">4 Segments</div>
+                <div class="stat-label">Optimal Clusters (K=4)</div>
+            </div>
+        </div>
+
+        <div class="card stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-sliders"></i></div>
+            <div>
+                <div class="stat-number">18 Features</div>
+                <div class="stat-label">Engineered & Encoded</div>
+            </div>
+        </div>
+
+        <div class="card stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-cube"></i></div>
+            <div>
+                <div class="stat-number">3 PCA</div>
+                <div class="stat-label">Principal Components (44.96% Var)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 4. ML Workflow Section -->
+<div class="card" style="margin-bottom: 2.8rem;">
+    <h2 class="section-title">
+        <i class="fa-solid fa-network-wired"></i> Machine Learning Workflow
+    </h2>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 0.8rem; margin-top: 1.5rem;">
+        
+        <div style="width: 100%; max-width: 650px; background: rgba(13, 17, 26, 0.8); border: 1px solid var(--border-subtle); padding: 0.9rem 1.4rem; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="background: rgba(99, 102, 241, 0.15); color: var(--accent-primary-light); padding: 6px 12px; border-radius: 6px; font-weight: 700; font-family: var(--font-heading); font-size: 0.85rem;">STEP 1</span>
+                <div>
+                    <strong style="color: var(--text-primary); font-family: var(--font-heading);">Raw Data Ingestion</strong>
+                    <div style="color: var(--text-muted); font-size: 0.82rem;">smartcart_customers.csv (2,240 records, 22 columns)</div>
+                </div>
+            </div>
+            <i class="fa-solid fa-database" style="color: var(--accent-primary-light);"></i>
+        </div>
+
+        <div style="color: var(--accent-primary-light); font-size: 1.1rem;"><i class="fa-solid fa-arrow-down"></i></div>
+
+        <div style="width: 100%; max-width: 650px; background: rgba(13, 17, 26, 0.8); border: 1px solid var(--border-subtle); padding: 0.9rem 1.4rem; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); padding: 6px 12px; border-radius: 6px; font-weight: 700; font-family: var(--font-heading); font-size: 0.85rem;">STEP 2</span>
+                <div>
+                    <strong style="color: var(--text-primary); font-family: var(--font-heading);">Preprocessing & Cleaning</strong>
+                    <div style="color: var(--text-muted); font-size: 0.82rem;">Median Income Imputation + Outlier Filter (Age &lt; 90, Income &lt; $600k)</div>
+                </div>
+            </div>
+            <i class="fa-solid fa-broom" style="color: var(--accent-cyan);"></i>
+        </div>
+
+        <div style="color: var(--accent-cyan); font-size: 1.1rem;"><i class="fa-solid fa-arrow-down"></i></div>
+
+        <div style="width: 100%; max-width: 650px; background: rgba(13, 17, 26, 0.8); border: 1px solid var(--border-subtle); padding: 0.9rem 1.4rem; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); padding: 6px 12px; border-radius: 6px; font-weight: 700; font-family: var(--font-heading); font-size: 0.85rem;">STEP 3</span>
+                <div>
+                    <strong style="color: var(--text-primary); font-family: var(--font-heading);">Feature Engineering</strong>
+                    <div style="color: var(--text-muted); font-size: 0.82rem;">Created Age, Tenure, Total Spending, Total Children & Grouped Categories</div>
+                </div>
+            </div>
+            <i class="fa-solid fa-wrench" style="color: var(--accent-amber);"></i>
+        </div>
+
+        <div style="color: var(--accent-amber); font-size: 1.1rem;"><i class="fa-solid fa-arrow-down"></i></div>
+
+        <div style="width: 100%; max-width: 650px; background: rgba(13, 17, 26, 0.8); border: 1px solid var(--border-subtle); padding: 0.9rem 1.4rem; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); padding: 6px 12px; border-radius: 6px; font-weight: 700; font-family: var(--font-heading); font-size: 0.85rem;">STEP 4</span>
+                <div>
+                    <strong style="color: var(--text-primary); font-family: var(--font-heading);">Standard Scaling & OHE</strong>
+                    <div style="color: var(--text-muted); font-size: 0.82rem;">One-Hot Encoded Categoricals + StandardScaler across 18 Features</div>
+                </div>
+            </div>
+            <i class="fa-solid fa-arrows-up-down-left-right" style="color: var(--accent-emerald);"></i>
+        </div>
+
+        <div style="color: var(--accent-emerald); font-size: 1.1rem;"><i class="fa-solid fa-arrow-down"></i></div>
+
+        <div style="width: 100%; max-width: 650px; background: rgba(13, 17, 26, 0.8); border: 1px solid var(--border-subtle); padding: 0.9rem 1.4rem; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="background: rgba(139, 92, 246, 0.15); color: #a78bfa; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-family: var(--font-heading); font-size: 0.85rem;">STEP 5</span>
+                <div>
+                    <strong style="color: var(--text-primary); font-family: var(--font-heading);">PCA Dimensionality Reduction</strong>
+                    <div style="color: var(--text-muted); font-size: 0.82rem;">PCA(n_components=3) for 3D Spatial Vector Projection</div>
+                </div>
+            </div>
+            <i class="fa-solid fa-cube" style="color: #a78bfa;"></i>
+        </div>
+
+        <div style="color: #a78bfa; font-size: 1.1rem;"><i class="fa-solid fa-arrow-down"></i></div>
+
+        <div style="width: 100%; max-width: 650px; background: rgba(13, 17, 26, 0.8); border: 1px solid var(--border-subtle); padding: 0.9rem 1.4rem; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="background: rgba(244, 63, 94, 0.15); color: var(--accent-rose); padding: 6px 12px; border-radius: 6px; font-weight: 700; font-family: var(--font-heading); font-size: 0.85rem;">STEP 6</span>
+                <div>
+                    <strong style="color: var(--text-primary); font-family: var(--font-heading);">Agglomerative Clustering (K=4)</strong>
+                    <div style="color: var(--text-muted); font-size: 0.82rem;">Ward Linkage Clustering validated by Elbow Method & Silhouette Score</div>
+                </div>
+            </div>
+            <i class="fa-solid fa-diagram-project" style="color: var(--accent-rose);"></i>
+        </div>
+
+        <div style="color: var(--accent-rose); font-size: 1.1rem;"><i class="fa-solid fa-arrow-down"></i></div>
+
+        <div style="width: 100%; max-width: 650px; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); padding: 1rem 1.4rem; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="cluster-badge badge-c3">OUTPUT</span>
+                <div>
+                    <strong style="color: var(--accent-emerald); font-family: var(--font-heading); font-size: 1.05rem;">4 Customer Personas</strong>
+                    <div style="color: var(--text-secondary); font-size: 0.85rem;">Actionable Customer Segments for Targeted E-Commerce Campaigns</div>
+                </div>
+            </div>
+            <i class="fa-solid fa-circle-check" style="color: var(--accent-emerald); font-size: 1.3rem;"></i>
+        </div>
+
+    </div>
+</div>
+
+<!-- 5. Cluster Overview Section -->
+<div style="margin-bottom: 2.8rem;">
+    <h2 class="section-title">
+        <i class="fa-solid fa-users"></i> Resulting Customer Clusters
+    </h2>
+    <div class="grid-2" style="margin-bottom: 0;">
+        
+        <!-- Cluster 0 -->
+        <div class="card" style="border-top: 3px solid var(--accent-rose);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <span class="cluster-badge badge-c0">Cluster 0</span>
+                <span style="color: var(--text-muted); font-size: 0.82rem;"><i class="fa-solid fa-heart"></i> 100% Partnered</span>
+            </div>
+            <h3 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--text-primary); margin-bottom: 0.5rem;">
+                Budget Partnered Families
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1.2rem;">
+                Moderate-to-low income households living with a partner. High number of children, conservative spending habits, and moderate store/web activity.
+            </p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; background: rgba(13, 17, 26, 0.6); padding: 0.9rem; border-radius: var(--radius-sm); font-size: 0.85rem;">
+                <div><span style="color: var(--text-muted);">Avg. Income:</span> <strong style="color: var(--text-primary);">$39,681</strong></div>
+                <div><span style="color: var(--text-muted);">Avg. Spending:</span> <strong style="color: var(--text-primary);">$222</strong></div>
+                <div><span style="color: var(--text-muted);">Avg. Children:</span> <strong style="color: var(--text-primary);">1.24</strong></div>
+                <div><span style="color: var(--text-muted);">Web Visits:</span> <strong style="color: var(--text-primary);">6.31/mo</strong></div>
+            </div>
+        </div>
+
+        <!-- Cluster 1 -->
+        <div class="card" style="border-top: 3px solid var(--accent-primary-light);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <span class="cluster-badge badge-c1">Cluster 1</span>
+                <span style="color: var(--text-muted); font-size: 0.82rem;"><i class="fa-solid fa-gem"></i> High Value</span>
+            </div>
+            <h3 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--text-primary); margin-bottom: 0.5rem;">
+                Affluent Partnered High-Spenders
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1.2rem;">
+                High-earning partnered customers with few children. High purchasing power across store and catalog channels with large total cart values.
+            </p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; background: rgba(13, 17, 26, 0.6); padding: 0.9rem; border-radius: var(--radius-sm); font-size: 0.85rem;">
+                <div><span style="color: var(--text-muted);">Avg. Income:</span> <strong style="color: var(--text-primary);">$72,808</strong></div>
+                <div><span style="color: var(--text-muted);">Avg. Spending:</span> <strong style="color: var(--text-primary);">$1,237</strong></div>
+                <div><span style="color: var(--text-muted);">Avg. Children:</span> <strong style="color: var(--text-primary);">0.51</strong></div>
+                <div><span style="color: var(--text-muted);">Store Purchases:</span> <strong style="color: var(--text-primary);">8.66</strong></div>
+            </div>
+        </div>
+
+        <!-- Cluster 2 -->
+        <div class="card" style="border-top: 3px solid var(--accent-amber);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <span class="cluster-badge badge-c2">Cluster 2</span>
+                <span style="color: var(--text-muted); font-size: 0.82rem;"><i class="fa-solid fa-user"></i> 99.3% Alone</span>
+            </div>
+            <h3 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--text-primary); margin-bottom: 0.5rem;">
+                Budget Single Individuals
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1.2rem;">
+                Lower income single/divorced/widowed individuals with children at home. Low overall spending, frequent web visits, and price-sensitive purchase patterns.
+            </p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; background: rgba(13, 17, 26, 0.6); padding: 0.9rem; border-radius: var(--radius-sm); font-size: 0.85rem;">
+                <div><span style="color: var(--text-muted);">Avg. Income:</span> <strong style="color: var(--text-primary);">$36,960</strong></div>
+                <div><span style="color: var(--text-muted);">Avg. Spending:</span> <strong style="color: var(--text-primary);">$166</strong></div>
+                <div><span style="color: var(--text-muted);">Avg. Children:</span> <strong style="color: var(--text-primary);">1.27</strong></div>
+                <div><span style="color: var(--text-muted);">Web Visits:</span> <strong style="color: var(--text-primary);">6.66/mo</strong></div>
+            </div>
+        </div>
+
+        <!-- Cluster 3 -->
+        <div class="card" style="border-top: 3px solid var(--accent-emerald);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <span class="cluster-badge badge-c3">Cluster 3</span>
+                <span style="color: var(--text-muted); font-size: 0.82rem;"><i class="fa-solid fa-bullhorn"></i> 32% Response</span>
+            </div>
+            <h3 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--text-primary); margin-bottom: 0.5rem;">
+                Affluent Single High-Responders
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1.2rem;">
+                High income single customers with high spending and low children. Highest responsiveness to marketing campaigns (32%) and frequent web/catalog buyers.
+            </p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; background: rgba(13, 17, 26, 0.6); padding: 0.9rem; border-radius: var(--radius-sm); font-size: 0.85rem;">
+                <div><span style="color: var(--text-muted);">Avg. Income:</span> <strong style="color: var(--text-primary);">$70,723</strong></div>
+                <div><span style="color: var(--text-muted);">Avg. Spending:</span> <strong style="color: var(--text-primary);">$1,190</strong></div>
+                <div><span style="color: var(--text-muted);">Avg. Children:</span> <strong style="color: var(--text-primary);">0.46</strong></div>
+                <div><span style="color: var(--text-muted);">Campaign Resp:</span> <strong style="color: var(--accent-emerald);">32.0%</strong></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- 6. Technology Section -->
+<div class="card">
+    <h2 class="section-title">
+        <i class="fa-solid fa-laptop-code"></i> Technologies Used
+    </h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
+        <span style="background: rgba(99, 102, 241, 0.12); color: var(--accent-primary-light); border: 1px solid rgba(99, 102, 241, 0.25); padding: 8px 18px; border-radius: 30px; font-family: var(--font-heading); font-weight: 600; font-size: 0.9rem;">
+            <i class="fa-brands fa-python"></i> Python
+        </span>
+        <span style="background: rgba(6, 182, 212, 0.12); color: var(--accent-cyan); border: 1px solid rgba(6, 182, 212, 0.25); padding: 8px 18px; border-radius: 30px; font-family: var(--font-heading); font-weight: 600; font-size: 0.9rem;">
+            <i class="fa-solid fa-table"></i> Pandas
+        </span>
+        <span style="background: rgba(16, 185, 129, 0.12); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.25); padding: 8px 18px; border-radius: 30px; font-family: var(--font-heading); font-weight: 600; font-size: 0.9rem;">
+            <i class="fa-solid fa-calculator"></i> NumPy
+        </span>
+        <span style="background: rgba(245, 158, 11, 0.12); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.25); padding: 8px 18px; border-radius: 30px; font-family: var(--font-heading); font-weight: 600; font-size: 0.9rem;">
+            <i class="fa-solid fa-gear"></i> Scikit-learn
+        </span>
+        <span style="background: rgba(244, 63, 94, 0.12); color: var(--accent-rose); border: 1px solid rgba(244, 63, 94, 0.25); padding: 8px 18px; border-radius: 30px; font-family: var(--font-heading); font-weight: 600; font-size: 0.9rem;">
+            <i class="fa-solid fa-chart-area"></i> Matplotlib / Seaborn
+        </span>
+        <span style="background: rgba(139, 92, 246, 0.12); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.25); padding: 8px 18px; border-radius: 30px; font-family: var(--font-heading); font-weight: 600; font-size: 0.9rem;">
+            <i class="fa-solid fa-flask"></i> Flask
+        </span>
+        <span style="background: rgba(255, 255, 255, 0.08); color: var(--text-primary); border: 1px solid var(--border-subtle); padding: 8px 18px; border-radius: 30px; font-family: var(--font-heading); font-weight: 600; font-size: 0.9rem;">
+            <i class="fa-brands fa-html5"></i> HTML5
+        </span>
+        <span style="background: rgba(255, 255, 255, 0.08); color: var(--text-primary); border: 1px solid var(--border-subtle); padding: 8px 18px; border-radius: 30px; font-family: var(--font-heading); font-weight: 600; font-size: 0.9rem;">
+            <i class="fa-brands fa-css3-alt"></i> CSS3
+        </span>
+    </div>
+</div>
+{% endblock %}

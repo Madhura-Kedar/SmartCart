@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <h1 style="font-family: var(--font-heading); font-size: 2.2rem; margin-bottom: 0.5rem;">
+        <i class="fa-solid fa-chart-pie" style="color: var(--accent-primary-light);"></i> Machine Learning Analysis & Model Evaluation
+    </h1>
+    <p style="color: var(--text-secondary); font-size: 1.05rem;">
+        Detailed breakdown of data preprocessing, feature engineering, optimal K-selection metrics, PCA dimensionality reduction, and cluster characteristics derived from <code style="color: var(--accent-cyan); background: rgba(0,0,0,0.3); padding: 2px 8px; border-radius: 4px;">SmartCart.ipynb</code>.
+    </p>
+</div>
+
+<!-- Grid section: Preprocessing & Dimensionality Reduction -->
+<div class="grid-2">
+    <!-- Preprocessing & Feature Engineering Summary -->
+    <div class="card">
+        <h3 class="section-title">
+            <i class="fa-solid fa-filter" style="color: var(--accent-emerald);"></i> Data Preprocessing & Cleaning
+        </h3>
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.8rem; color: var(--text-secondary); font-size: 0.92rem;">
+            <li><strong style="color: var(--text-primary);"><i class="fa-solid fa-check" style="color: var(--accent-emerald);"></i> Missing Value Imputation:</strong> 24 missing <code>Income</code> entries filled with median income.</li>
+            <li><strong style="color: var(--text-primary);"><i class="fa-solid fa-check" style="color: var(--accent-emerald);"></i> Feature Engineering:</strong> Calculated <code>Age</code> (2026 - Year_Birth), <code>Customer_Tenure_Days</code>, <code>Total_spending</code> (sum of 6 product categories), and <code>Total_children</code>.</li>
+            <li><strong style="color: var(--text-primary);"><i class="fa-solid fa-check" style="color: var(--accent-emerald);"></i> Categorical Mapping:</strong> Standardized <code>Education</code> (Graduate, Postgraduate, Undergraduate) and <code>Living_With</code> (Partner vs. Alone).</li>
+            <li><strong style="color: var(--text-primary);"><i class="fa-solid fa-check" style="color: var(--accent-emerald);"></i> Outlier Removal:</strong> Filtered out extreme outliers (Age &ge; 90 and Income &ge; $600,000), reducing dataset from 2,240 to 2,236 clean customer samples.</li>
+            <li><strong style="color: var(--text-primary);"><i class="fa-solid fa-check" style="color: var(--accent-emerald);"></i> Scaling & OHE:</strong> One-Hot Encoded categorical variables and standardized all 18 features via <code>StandardScaler</code>.</li>
+        </ul>
+    </div>
+
+    <!-- Cluster Determination (K-Means & Silhouette) -->
+    <div class="card">
+        <h3 class="section-title">
+            <i class="fa-solid fa-bullseye" style="color: var(--accent-cyan);"></i> Optimal Cluster Selection (K = 4)
+        </h3>
+        <p style="color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 1.2rem; line-height: 1.6;">
+            To determine the optimal number of segments, both the <strong>Elbow Method</strong> (within-cluster sum of squares) and <strong>Silhouette Analysis</strong> were evaluated on the 3D PCA projection space.
+        </p>
+        <div style="background: rgba(13, 17, 26, 0.7); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 1.2rem; display: flex; flex-direction: column; gap: 0.8rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 600; color: var(--text-primary); font-size: 0.9rem;">KneeLocator Elbow Point:</span>
+                <span style="background: rgba(99, 102, 241, 0.2); color: var(--accent-primary-light); border: 1px solid rgba(99, 102, 241, 0.3); padding: 4px 14px; border-radius: 12px; font-weight: 700; font-family: var(--font-heading);">K = 4</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 600; color: var(--text-primary); font-size: 0.9rem;">Clustering Algorithm:</span>
+                <span style="color: var(--accent-cyan); font-weight: 600;">Agglomerative (Ward Linkage)</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 600; color: var(--text-primary); font-size: 0.9rem;">PCA Components:</span>
+                <span style="color: var(--accent-emerald); font-weight: 600;">3 Components (~44.96% Variance)</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cluster Characteristics Summary Table -->
+<div class="card" style="margin-bottom: 2.8rem;">
+    <h3 class="section-title">
+        <i class="fa-solid fa-users" style="color: var(--accent-primary-light);"></i> Cluster Persona Characterization Summary
+    </h3>
+    <p style="color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 1.2rem;">
+        Average feature metrics calculated per cluster after applying Agglomerative Clustering:
+    </p>
+
+    <div class="table-responsive">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Cluster ID</th>
+                    <th>Persona Name</th>
+                    <th>Avg. Income</th>
+                    <th>Avg. Spending</th>
+                    <th>Avg. Children</th>
+                    <th>Living Status</th>
+                    <th>Web Purchases</th>
+                    <th>Store Purchases</th>
+                    <th>Campaign Response</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="cluster-badge badge-c0">Cluster 0</span></td>
+                    <td><strong style="color: var(--text-primary);">Budget Partnered Families</strong></td>
+                    <td>$39,680</td>
+                    <td>$222</td>
+                    <td>1.24</td>
+                    <td>100% Partner</td>
+                    <td>3.15</td>
+                    <td>4.14</td>
+                    <td>7.6%</td>
+                </tr>
+                <tr>
+                    <td><span class="cluster-badge badge-c1">Cluster 1</span></td>
+                    <td><strong style="color: var(--text-primary);">Affluent Partnered High-Spenders</strong></td>
+                    <td>$72,808</td>
+                    <td>$1,237</td>
+                    <td>0.51</td>
+                    <td>100% Partner</td>
+                    <td>5.69</td>
+                    <td>8.66</td>
+                    <td>16.7%</td>
+                </tr>
+                <tr>
+                    <td><span class="cluster-badge badge-c2">Cluster 2</span></td>
+                    <td><strong style="color: var(--text-primary);">Budget Single Individuals</strong></td>
+                    <td>$36,960</td>
+                    <td>$166</td>
+                    <td>1.27</td>
+                    <td>99.3% Alone</td>
+                    <td>2.71</td>
+                    <td>3.62</td>
+                    <td>14.2%</td>
+                </tr>
+                <tr>
+                    <td><span class="cluster-badge badge-c3">Cluster 3</span></td>
+                    <td><strong style="color: var(--text-primary);">Affluent Single High-Responders</strong></td>
+                    <td>$70,723</td>
+                    <td>$1,190</td>
+                    <td>0.46</td>
+                    <td>100% Alone</td>
+                    <td>5.79</td>
+                    <td>8.43</td>
+                    <td><strong style="color: var(--accent-emerald);">32.0%</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Bottom Navigation Bar -->
+<div class="card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; background: rgba(13, 17, 26, 0.7);">
+    <div>
+        <h4 style="font-family: var(--font-heading); color: var(--text-primary); font-size: 1.1rem; margin-bottom: 4px;">
+            Next Step: Test Live Customer Inference
+        </h4>
+        <p style="color: var(--text-secondary); font-size: 0.88rem;">
+            Demonstrate the trained pipeline on custom customer inputs in real-time.
+        </p>
+    </div>
+    <div style="display: flex; gap: 1rem;">
+        <a href="{{ url_for('segmentation') }}" class="btn btn-primary">
+            <i class="fa-solid fa-users-viewfinder"></i> Try Live Segmentation &rarr;
+        </a>
+    </div>
+</div>
+{% endblock %}
