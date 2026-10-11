@@ -7,7 +7,7 @@
 
 ## Demo
 
-![SmartCart UI](templates/index.html)
+
 
 Enter customer attributes → the model runs **OHE → StandardScaler → PCA (3D) → KMeans (k=4)**
 and returns a segment name, a human-readable reason, and a tailored marketing tip.
