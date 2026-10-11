@@ -3,7 +3,6 @@
 > **Unsupervised ML minor project** — KMeans clustering on e-commerce customer data,
 > served through a Flask web app with a clean UI.
 
-live demo : https://smartcart-1-joa9.onrender.com
 ---
 
 ## Demo
@@ -12,6 +11,8 @@ live demo : https://smartcart-1-joa9.onrender.com
 
 Enter customer attributes → the model runs **OHE → StandardScaler → PCA (3D) → KMeans (k=4)**
 and returns a segment name, a human-readable reason, and a tailored marketing tip.
+
+live demo : https://smartcart-1-joa9.onrender.com
 
 ---
 
