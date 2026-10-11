@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartCart - Customer Segmentation</title>
+  <meta name="description" content="SmartCart ML-powered customer segmentation demo using KMeans clustering." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #f0f4ff;
+      --white:     #ffffff;
+      --border:    #dde3f5;
+      --accent:    #4f46e5;
+      --accent-lt: #ede9fe;
+      --accent2:   #0ea5e9;
+      --text:      #1e2340;
+      --muted:     #64748b;
+      --success:   #059669;
+      --success-lt:#d1fae5;
+      --danger:    #dc2626;
+      --danger-lt: #fee2e2;
+      --radius:    16px;
+      --shadow:    0 4px 24px rgba(79,70,229,.08);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter", sans-serif;
+      min-height: 100vh;
+      padding: 2rem 1rem 5rem;
+    }
+
+    /* HEADER */
+    .header {
+      max-width: 860px;
+      margin: 0 auto 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+    }
+    .header-icon {
+      width: 52px; height: 52px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+      box-shadow: 0 6px 18px rgba(79,70,229,.3);
+    }
+    .header-text h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -.02em;
+    }
+    .header-text p { font-size: .88rem; color: var(--muted); margin-top: .15rem; }
+    .pill {
+      display: inline-flex; align-items: center; gap: .35rem;
+      background: var(--accent-lt); color: var(--accent);
+      font-size: .72rem; font-weight: 600; letter-spacing: .06em;
+      text-transform: uppercase; padding: .25rem .75rem;
+      border-radius: 999px; margin-top: .4rem;
+    }
+
+    /* LAYOUT */
+    .layout { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.4rem; }
+
+    /* CARD */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.6rem 1.8rem;
+    }
+
+    /* SECTION HEADING */
+    .section-head { display: flex; align-items: center; gap: .6rem; margin-bottom: 1.1rem; }
+    .section-icon {
+      width: 30px; height: 30px; border-radius: 8px;
+      background: var(--accent-lt); color: var(--accent);
+      font-size: 1rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .section-head h2 { font-size: .93rem; font-weight: 600; color: var(--text); }
+
+    /* GRID */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: .85rem 1.3rem; }
+
+    /* FIELD */
+    .field { display: flex; flex-direction: column; gap: .3rem; }
+    .field label { font-size: .78rem; font-weight: 500; color: var(--muted); }
+    .field input, .field select {
+      height: 40px; padding: 0 .85rem;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      background: #fafbff; color: var(--text);
+      font-size: .9rem; font-family: inherit; outline: none;
+      transition: border-color .18s, box-shadow .18s;
+      -webkit-appearance: none; appearance: none;
+    }
+    .field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right .75rem center;
+      padding-right: 2.2rem;
+    }
+    .field input:focus, .field select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(79,70,229,.12);
+      background: #fff;
+    }
+
+    /* BUTTON */
+    .btn-row { display: flex; justify-content: flex-end; }
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .72rem 2rem;
+      background: linear-gradient(135deg, var(--accent) 0%, #7c3aed 100%);
+      color: #fff; font-family: inherit; font-size: .95rem; font-weight: 600;
+      border: none; border-radius: 10px; cursor: pointer;
+      box-shadow: 0 4px 14px rgba(79,70,229,.35);
+      transition: opacity .18s, transform .15s, box-shadow .18s;
+      letter-spacing: .01em;
+    }
+    .btn:hover  { opacity: .9; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(79,70,229,.4); }
+    .btn:active { transform: translateY(0); }
+    .btn.loading { opacity: .65; pointer-events: none; }
+    .spin {
+      display: inline-block; width: 15px; height: 15px;
+      border: 2px solid rgba(255,255,255,.4); border-top-color: #fff;
+      border-radius: 50%; animation: rot .65s linear infinite;
+    }
+    @keyframes rot { to { transform: rotate(360deg); } }
+
+    /* RESULT */
+    #result-card {
+      display: none;
+      border-left: 4px solid var(--success);
+      background: var(--success-lt);
+      border-radius: var(--radius);
+      padding: 1.5rem 1.8rem;
+      animation: pop .3s ease;
+    }
+    #result-card.err { border-left-color: var(--danger); background: var(--danger-lt); }
+    @keyframes pop {
+      from { opacity: 0; transform: scale(.97) translateY(8px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .result-top { display: flex; align-items: center; gap: .8rem; margin-bottom: .9rem; }
+    .cluster-bubble {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--success); color: #fff;
+      font-size: .78rem; font-weight: 700; letter-spacing: -.01em;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    #result-card.err .cluster-bubble { background: var(--danger); }
+    .result-label {
+      font-size: .7rem; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--success); margin-bottom: .12rem;
+    }
+    #result-card.err .result-label { color: var(--danger); }
+    #segment-name { font-size: 1.25rem; font-weight: 700; color: var(--text); margin-bottom: .1rem; }
+
+    /* REASON BLOCK */
+    .reason-block {
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(5,150,105,.25);
+      border-radius: 10px;
+      padding: .75rem 1rem;
+      margin: .9rem 0 1rem;
+    }
+    #result-card.err .reason-block { border-color: rgba(220,38,38,.2); }
+    .reason-tag {
+      font-size: .7rem; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--success);
+      margin-bottom: .35rem;
+    }
+    #result-card.err .reason-tag { color: var(--danger); }
+    #reason-text {
+      font-size: .85rem; color: var(--text); line-height: 1.6;
+    }
+
+    .tip-tag {
+      display: inline-flex; align-items: center; gap: .3rem;
+      font-size: .72rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .07em; color: var(--accent); background: var(--accent-lt);
+      padding: .2rem .65rem; border-radius: 999px; margin-bottom: .5rem;
+    }
+    #suggestion { font-size: .88rem; color: var(--muted); line-height: 1.65; }
+
+    /* FOOTER */
+    footer {
+      max-width: 860px; margin: 2rem auto 0;
+      text-align: center; font-size: .78rem; color: var(--muted);
+    }
+
+    @media (max-width: 600px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .card   { padding: 1.2rem 1.1rem; }
+      .header { flex-direction: column; align-items: flex-start; gap: .7rem; }
+      .btn    { width: 100%; justify-content: center; }
+      .btn-row { justify-content: stretch; }
+    }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-icon">&#128722;</div>
+  <div class="header-text">
+    <h1>SmartCart Segmentation</h1>
+    <p>ML-powered customer profiling &mdash; KMeans &plus; PCA &plus; StandardScaler</p>
+    <span class="pill">&#10022; Live Demo</span>
+  </div>
+</div>
+
+<div class="layout">
+  <form id="seg-form">
+
+    <!-- DEMOGRAPHICS -->
+    <div class="card">
+      <div class="section-head">
+        <div class="section-icon">&#128100;</div>
+        <h2>Demographics</h2>
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label for="Age">Age</label>
+          <input id="Age" name="Age" type="number" min="18" max="120" value="38" required />
+        </div>
+        <div class="field">
+          <label for="Income">Annual Income ($)</label>
+          <input id="Income" name="Income" type="number" min="0" value="55000" required />
+        </div>
+        <div class="field">
+          <label for="Education">Education Level</label>
+          <select id="Education" name="Education" required>
+            <option value="Undergraduate">Undergraduate</option>
+            <option value="Graduate" selected>Graduate</option>
+            <option value="Postgraduate">Postgraduate</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="Living_With">Living With</label>
+          <select id="Living_With" name="Living_With" required>
+            <option value="Alone">Alone</option>
+            <option value="Partner" selected>Partner</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="Total_children">Total Children</label>
+          <input id="Total_children" name="Total_children" type="number" min="0" max="10" value="1" required />
+        </div>
+        <div class="field">
+          <label for="Customer_Tenure_Days">Customer Tenure (days)</label>
+          <input id="Customer_Tenure_Days" name="Customer_Tenure_Days" type="number" min="0" value="730" required />
+        </div>
+      </div>
+    </div>
+
+    <!-- SPENDING & ENGAGEMENT -->
+    <div class="card">
+      <div class="section-head">
+        <div class="section-icon">&#128176;</div>
+        <h2>Spending &amp; Engagement</h2>
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label for="Total_spending">Total Spending ($)</label>
+          <input id="Total_spending" name="Total_spending" type="number" min="0" value="800" required />
+        </div>
+        <div class="field">
+          <label for="Recency">Recency (days since last purchase)</label>
+          <input id="Recency" name="Recency" type="number" min="0" value="20" required />
+        </div>
+        <div class="field">
+          <label for="NumWebVisitsMonth">Web Visits / Month</label>
+          <input id="NumWebVisitsMonth" name="NumWebVisitsMonth" type="number" min="0" value="5" required />
+        </div>
+      </div>
+    </div>
+
+    <!-- PURCHASE CHANNELS -->
+    <div class="card">
+      <div class="section-head">
+        <div class="section-icon">&#128674;</div>
+        <h2>Purchase Channels</h2>
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label for="NumDealsPurchases">Deals Purchases</label>
+          <input id="NumDealsPurchases" name="NumDealsPurchases" type="number" min="0" value="3" required />
+        </div>
+        <div class="field">
+          <label for="NumWebPurchases">Web Purchases</label>
+          <input id="NumWebPurchases" name="NumWebPurchases" type="number" min="0" value="6" required />
+        </div>
+        <div class="field">
+          <label for="NumCatalogPurchases">Catalog Purchases</label>
+          <input id="NumCatalogPurchases" name="NumCatalogPurchases" type="number" min="0" value="2" required />
+        </div>
+        <div class="field">
+          <label for="NumStorePurchases">Store Purchases</label>
+          <input id="NumStorePurchases" name="NumStorePurchases" type="number" min="0" value="5" required />
+        </div>
+      </div>
+    </div>
+
+    <!-- CAMPAIGN FLAGS -->
+    <div class="card">
+      <div class="section-head">
+        <div class="section-icon">&#9873;&#65039;</div>
+        <h2>Campaign Flags</h2>
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label for="Complain">Filed a Complaint?</label>
+          <select id="Complain" name="Complain" required>
+            <option value="0" selected>0 &mdash; No</option>
+            <option value="1">1 &mdash; Yes</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="Response">Responded to Campaign?</label>
+          <select id="Response" name="Response" required>
+            <option value="0">0 &mdash; No</option>
+            <option value="1" selected>1 &mdash; Yes</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button type="submit" id="submit-btn" class="btn">
+        <svg width="17" height="17" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707a1 1 0 00-1.414-1.414L9 11.172 7.707 9.879a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        Predict Segment
+      </button>
+    </div>
+
+  </form>
+
+  <!-- RESULT -->
+  <div id="result-card">
+    <div class="result-top">
+      <div class="cluster-bubble" id="cluster-num">C0</div>
+      <div>
+        <div class="result-label" id="result-label">Predicted Segment</div>
+        <div id="segment-name">Loading...</div>
+      </div>
+    </div>
+
+    <div class="reason-block">
+      <div class="reason-tag">&#128270; Why this segment?</div>
+      <div id="reason-text"></div>
+    </div>
+
+    <div class="tip-tag">&#128161; Marketing Tip</div>
+    <div id="suggestion"></div>
+  </div>
+
+</div>
+
+<footer>
+  Built with Flask &middot; scikit-learn &middot; KMeans Clustering &mdash; SmartCart Minor Project
+</footer>
+
+<script>
+
+  const form       = document.getElementById('seg-form');
+  const btn        = document.getElementById('submit-btn');
+  const resultCard = document.getElementById('result-card');
+  const clusterNum = document.getElementById('cluster-num');
+  const segName    = document.getElementById('segment-name');
+  const reasonText = document.getElementById('reason-text');
+  const suggestion = document.getElementById('suggestion');
+  const resLabel   = document.getElementById('result-label');
+
+  const BTN_DEFAULT = btn.innerHTML;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    btn.classList.add('loading');
+    btn.innerHTML = '<span class="spin"></span>&nbsp;Predicting&hellip;';
+    resultCard.style.display = 'none';
+    resultCard.classList.remove('err');
+
+    const payload = Object.fromEntries(new FormData(form).entries());
+
+    try {
+      const res  = await fetch('/predict', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(payload),
+      });
+      const data = await res.json();
+
+      if (!res.ok || data.error) {
+        resultCard.classList.add('err');
+        clusterNum.textContent = '!';
+        resLabel.textContent   = 'Error';
+        segName.textContent    = 'Prediction failed';
+        suggestion.textContent = data.error || 'Unknown error';
+      } else {
+        clusterNum.textContent = 'C' + data.cluster_id;
+        resLabel.textContent   = 'Predicted Segment';
+        segName.textContent    = data.segment;
+        reasonText.textContent = data.reason || '';
+        suggestion.textContent = data.suggestion;
+      }
+    } catch (err) {
+      resultCard.classList.add('err');
+      clusterNum.textContent = '!';
+      resLabel.textContent   = 'Network Error';
+      segName.textContent    = 'Could not reach the server';
+      suggestion.textContent = err.message;
+    }
+
+    resultCard.style.display = 'block';
+    resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    btn.classList.remove('loading');
+    btn.innerHTML = BTN_DEFAULT;
+  });
+
+</script>
+</body>
+</html>
