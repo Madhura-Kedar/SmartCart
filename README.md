@@ -3,6 +3,7 @@
 > **Unsupervised ML minor project** — KMeans clustering on e-commerce customer data,
 > served through a Flask web app with a clean UI.
 
+live demo : https://smartcart-1-joa9.onrender.com
 ---
 
 ## Demo
